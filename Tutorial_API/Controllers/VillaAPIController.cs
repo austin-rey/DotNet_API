@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Tutorial_API.Data;
+using Tutorial_API.Logging;
 using Tutorial_API.Models.Dto;
 
 namespace Tutorial_API.Controllers
@@ -9,8 +10,8 @@ namespace Tutorial_API.Controllers
     [ApiController]
     public class VillaAPIController : ControllerBase
     {
-        private readonly  ILogger<VillaAPIController> _logger;
-        public VillaAPIController(ILogger<VillaAPIController> logger) {
+        private readonly ILogging _logger;
+        public VillaAPIController(ILogging logger) {
             _logger = logger;
         }
 
@@ -18,7 +19,7 @@ namespace Tutorial_API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<IEnumerable<VillaDTO>> GetVillas()
         {
-            _logger.LogInformation("Getting all villas.");
+            _logger.Log("Getting all villas", "");
             return Ok(VillaStore.villaList);
         }
 
@@ -30,7 +31,7 @@ namespace Tutorial_API.Controllers
         {
             if (id == 0)
             {
-                _logger.LogError("Gett Villa Error with ID" + id);
+                _logger.Log("Gett Villa Error with ID" + id, "error");
                 return BadRequest();
             }
 

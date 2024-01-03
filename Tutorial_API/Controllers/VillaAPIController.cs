@@ -62,7 +62,7 @@ namespace Tutorial_API.Controllers
             //    return BadRequest(ModelState);
             //}
 
-            if (_db.Villas.FirstOrDefaultAsync(v => v.Name.ToLower() == villaDTO.Name.ToLower()) != null)
+            if (await _db.Villas.FirstOrDefaultAsync(v => v.Name.ToLower() == villaDTO.Name.ToLower()) != null)
             {
                 ModelState.AddModelError("CustomError", "Villa already exists.");
                 return BadRequest(ModelState);
@@ -84,8 +84,8 @@ namespace Tutorial_API.Controllers
                 Details = villaDTO.Details
             };
 
-            _db.Villas.Add(model);
-            _db.SaveChanges();
+            _db.Villas.AddAsync(model);
+            await _db.SaveChangesAsync();
 
             return CreatedAtRoute("GetVilla", new { id = model.Id }, model);
         }
@@ -94,14 +94,14 @@ namespace Tutorial_API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult DeleteVilla(int id)
+        public async Task<IActionResult> DeleteVilla(int id)
         {
             if (id == 0)
             {
                 return BadRequest();
             }
 
-            var villa = _db.Villas.FirstOrDefault(v => v.Id == id);
+            var villa = await _db.Villas.FirstOrDefaultAsync(v => v.Id == id);
 
             if (villa == null)
             {
@@ -109,6 +109,7 @@ namespace Tutorial_API.Controllers
             }
 
             _db.Villas.Remove(villa);
+            await _db.SaveChangesAsync();
 
             return NoContent();
 
@@ -117,7 +118,7 @@ namespace Tutorial_API.Controllers
         [HttpPut("id", Name = "UpdateVilla")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult UpdateVilla(int id, [FromBody] VillaUpdateDTO villaDTO)
+        public async Task<IActionResult> UpdateVilla(int id, [FromBody] VillaUpdateDTO villaDTO)
         {
             if (villaDTO == null || id != villaDTO.Id)
             {
@@ -137,22 +138,21 @@ namespace Tutorial_API.Controllers
             };
 
             _db.Villas.Update(model);
-            _db.SaveChanges();
-
+            await _db.SaveChangesAsync();
             return NoContent();
         }
 
         [HttpPatch("id", Name = "UpdatePartialVilla")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult UpdatePartialVilla(int id, JsonPatchDocument<VillaUpdateDTO> patchDTO)
+        public async Task<IActionResult> UpdatePartialVilla(int id, JsonPatchDocument<VillaUpdateDTO> patchDTO)
         {
             if (patchDTO == null || id == 0)
             {
                 return BadRequest();
             }
 
-            var villa = _db.Villas.FirstOrDefault(v => v.Id == id);
+            var villa = await _db.Villas.FirstOrDefaultAsync(v => v.Id == id);
 
             VillaUpdateDTO villaDTO = new()
             {
@@ -186,7 +186,7 @@ namespace Tutorial_API.Controllers
             };
 
             _db.Villas.Update(model);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
 
             if (!ModelState.IsValid)
             {

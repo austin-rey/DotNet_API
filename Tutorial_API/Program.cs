@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Tutorial_API;
 using Tutorial_API.Data;
 using Tutorial_API.Logging;
 
@@ -14,7 +15,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(option =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<ILogging, Logging>();
-
+builder.Services.AddAutoMapper(typeof(MappingConfig));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
